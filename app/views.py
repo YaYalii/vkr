@@ -4,6 +4,8 @@ from .models import Bell
 from .models import EmployeePhone
 from .models import Employee
 from .utils.minio_client import get_call_audio
+from app.search_indexes import BellDocument
+from elasticsearch_dsl import Q
 
 
 def index(request):
@@ -26,6 +28,7 @@ def bells_list(request):
     operator_id = request.GET.get('operator_id')
     bell_id = request.GET.get('bell_id')
     keywords = request.GET.get('keywords')
+    text_search = request.GET.get('text_search')
 
     if date_from:
         bells = bells.filter(datetime_bell__date__gte=date_from)
@@ -52,6 +55,12 @@ def bells_list(request):
     if keywords:
         for word in keywords.split():
             bells = bells.filter(text_transripct__icontains=word)
+
+    if text_search:
+        es_query = Q("multi_match", query=text_search, fields=["text_transripct"], fuzziness="auto")
+        search_results = BellDocument.search().query(es_query).execute()
+        es_ids = [int(hit.meta.id) for hit in search_results]  # Привести к int если id_bell это IntegerField
+        bells = bells.filter(id_bell__in=es_ids)
 
     # Срез только после всех фильтров
     bells = bells[:10]

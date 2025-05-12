@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from elasticsearch_dsl import connections
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_elasticsearch_dsl',
     'app', # Добавляем наше приложение из "Шаг 5"
     'django.contrib.postgres', #это модуль Django, который предоставляет интеграцию с базой данных PostgreSQL
 ]
@@ -105,6 +107,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://elasticsearch:9200'
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -138,3 +146,8 @@ AWS_STORAGE_BUCKET_NAME = 'call-recordings'
 AWS_S3_ENDPOINT_URL = 'http://minio:9000'
 AWS_S3_ADDRESSING_STYLE = 'path'
 AWS_QUERYSTRING_AUTH = False
+
+connections.create_connection(
+    alias='default',
+    hosts=['http://elasticsearch:9200']  # имя контейнера, не localhost!
+)
