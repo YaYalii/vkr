@@ -1,0 +1,254 @@
+    <!DOCTYPE html>
+    {% load static %}
+    {% load dict_extras %}
+    <html>
+    <head>
+        <title>SpeechSearch</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    </head>
+    <header>
+        <div  class="logo">
+            SpeechSearch
+        </div>
+        <div class="menu">
+            <span class="menu-button page-search">Поиск</span>
+            <span class="menu-button page-reports">Отчеты</span>
+            <span class="menu-button page-chat">Чат</span>
+        </div>
+        <div class="profile">
+            <span class="profile-name"></span>
+            <a href="">
+                <img src="{% static 'images/profile_logo.png' %}"  class="profile-logo">
+            </a>
+        </div>
+    </header>
+    <body>
+        <div class="container-bells">
+            <form method="get">
+                <div class="container-search">
+                    <div class="filters">
+                        <input type="button" onclick="openFilters()" value="Фильтры" class="filter-button border-button">
+                    </div>
+                    <div class="form">
+                        <div class="date-container">
+                            <span>Период с:</span>
+                            <input class="date-from border-button" name="date_from" type="date">
+                            <span>До:</span>
+                            <input class="date-before border-button" name="date_before" type="date">
+                        </div>
+                        <div class="search-block">
+                            <span>
+                                Поиск по словам:
+                            </span>
+                            <input type="text" class="text-input border-button" name="text_search">
+                            <input class="submit-button" type="submit" placeholder="Найти">
+                        </div>
+                    </div>
+                </div>
+                <div id="filters" style="display: none;">
+            <div class="filter-header">
+            <span id="filters-text">Фильтры</span>
+            <span id="filter-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="filter-content">
+                <div class="filter-grid">
+                    <div class="filter-duration  filter-block">
+                        <span>
+                            Продолжительность диалога (сек.):
+                        </span>
+                        <br><br>
+                        <div class="filter-durations-block">
+                            <div class="filter-duration-from">
+                                <span>
+                                    От:
+                                </span>
+                                <input type="text" name="duration_from" id="filter-duration-from" class="filter-duration-input filter-input-border">
+                            </div>
+                            <div class="filter-duration-before">
+                                <span>
+                                    До:
+                                </span>
+                                <input type="text" name="duration_before" id="filter-duration-before" class="filter-duration-input filter-input-border">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-operator  filter-block">
+                        <span>ФИО оператора:</span><br><br>
+                        <select id="filter-select" class="filter-input-border" name="operator_id">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id_employee }}">
+                                {{ employee.surname}} {{employee.name}} {{employee.second_name}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-bell-id  filter-block">
+                        <span>Id звонка:</span><br><br>
+                        <input type="text" id="filter-bell-id" name="id_bell" class="filter-input-border">
+                    </div>
+                </div>
+                <div class="filter-keyword">
+                    <div class="filter-keyword-header">
+                        <span>Ключевые слова:</span>
+                        <input type="text" id="filter-keywords" class="filter-input-border">
+                    </div>
+                    <textarea id="filter-textarea" name="filter-textarea" class="filter-keywords-textarea filter-input-border">
+
+                    </textarea>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-cancel" onclick="clearFilters()">
+                        Сбросить
+                    </button>
+                    <button class="filter-apply" onclick="closeFilters()">
+                        Применить
+                    </button>
+                </div>
+            </div>
+            </div>
+            </form>
+            <div class="bells-list">
+                <div class="header-bells-list">
+                    Найдено записей
+                </div>
+                <div class="bells">
+                    {% for bell in bells %}
+                    {% with phone_map|dict_get:bell.id_employee_fk.id_employee as phone %}
+                    <div class="bell"
+                        data-id="{{ bell.id_bell }}"
+                         data-date="{{ bell.datetime_bell|date:'d.m.Y H:i' }}"
+                         data-operator="{{ bell.id_employee_fk.surname }} {{ bell.id_employee_fk.name }}"
+                         data-client-phone="{{ bell.client_phone }}"
+                         data-call-duration="{{ bell.call_duration }}"
+                         data-call-recording="{{ bell.call_reccording }}"
+                         data-sip-phone="{{ phone.sip_phone }}"
+                         data-transcript="{{ bell.text_transripct|escape }}">
+                        <div class="bell-info">
+                            <span class="bell-id">
+                                {{bell.id_bell}}
+                            </span>
+                            <span class="bell-date-time">
+                                Дата и время: {{ bell.datetime_bell|date:"d.m.Y H:i" }}
+                            </span>
+                            <span class="bell-employee-fio">
+                                Оператор: {{ bell.id_employee_fk.surname }} {{ bell.id_employee_fk.name }}
+                            </span>
+                        </div>
+                        <div class="bell-text">
+                            <span>
+                                {{ bell.text_transripct|slice:":500" }}...
+                            </span>
+                        </div>
+                        {% endwith %}
+                    </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                <div class="pagination">
+
+                </div>
+            </div>
+        </div>
+    <div id="modal-overlay" style="display: none;" class="modal-overlay"></div>
+    <div id="modal" style="display: none;" class="modal">
+        <div class="modal-header">
+        <span id="modal-id"></span>
+        <span id="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="modal-content">
+            <div class="modal-transcript">
+                <span id="modal-transcript"></span>
+            </div>
+            <div class="modal-info">
+                <audio id="modal-audio-player" controls style="width: 100%; margin-top: 20px;">
+                    <source id="modal-audio-source" src="" type="audio/wav">
+                    Ваш браузер не поддерживает аудио.
+                </audio>
+                <p><strong>Дата и время:</strong><br>
+                    <span id="modal-date"></span></p>
+                <p><strong>Оператор:</strong><br>
+                    <span id="modal-operator"></span></p>
+                <p><strong>Номер клиента:</strong><br>
+                    <span id="modal-client-phone"></span></p>
+                <p><strong>Длительность:</strong><br>
+                    <span id="modal-duration"></span> сек</p>
+                <p><strong>Файл записи:</strong><br>
+                    <span id="modal-recording"></span></p>
+                <p><strong>Sip-номер:</strong><br>
+                    <span id="modal-sip-phone"></span></p>
+            </div>
+<!--            <button id='modal-close' onclick="closeModal()">Закрыть</button>-->
+        </div>
+    </div>
+    <div id="filter-overlay" style="display: none;" class="modal-overlay"></div>
+    </div>
+    </body>
+    <script>
+
+
+        document.querySelectorAll('.bell').forEach(bell => {
+            bell.addEventListener('click', () => {
+                document.getElementById('modal-id').innerText = bell.dataset.id;
+                document.getElementById('modal-date').innerText = bell.dataset.date;
+                document.getElementById('modal-operator').innerText = bell.dataset.operator;
+                document.getElementById('modal-client-phone').innerText = bell.dataset.clientPhone;
+                document.getElementById('modal-duration').innerText = bell.dataset.callDuration;
+                document.getElementById('modal-recording').innerText = bell.dataset.callRecording;
+                document.getElementById('modal-transcript').innerText = bell.dataset.transcript;
+                document.getElementById('modal-sip-phone').innerText = bell.dataset.sipPhone;
+                document.getElementById('modal').style.display = 'block';
+                document.getElementById('modal-overlay').style.display = 'block';
+                const bellId = bell.dataset.id;
+                const audioSource = document.getElementById('modal-audio-source');
+                audioSource.src = `/download/${bellId}/`;  // маршрут Django
+
+                const audioPlayer = document.getElementById('modal-audio-player');
+                audioPlayer.load();
+            });
+        });
+
+
+        document.getElementById('modal-close').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+        });
+
+        document.getElementById('modal-overlay').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+        });
+
+
+    </script>
+
+    <script>
+
+    document.getElementById('filter-overlay').addEventListener('click', () => {
+            document.getElementById('filters').style.display = 'none';
+            document.getElementById('filter-overlay').style.display = 'none';
+        });
+
+    function openFilters() {
+    document.getElementById('filters').style.display = 'block';
+    document.getElementById('filter-overlay').style.display = 'block';
+    }
+
+    function closeFilters() {
+        document.getElementById('filters').style.display = 'none';
+        document.getElementById('filter-overlay').style.display = 'none';
+    }
+
+    function clearFilters() {
+        document.getElementById('filter-bell-id').value = '';
+        document.getElementById('filter-duration-from').value = '';
+        document.getElementById('filter-duration-before').value = '';
+        document.getElementById('filter-keywords').value = '';
+        document.getElementById('filter-textarea').value = '';
+    }
+    </script>
+
+</html>

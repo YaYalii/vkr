@@ -1,0 +1,313 @@
+.logo
+{
+    font-family: 'K2D';
+    font-size: 28px;
+    padding-right: 10px;
+    font-weight: 500;
+}
+body
+{
+    text-indent: 0;
+    margin: 0px;
+    background-color: rgba(230, 241, 249, 1);
+    height: 100%;
+    min-width: 1000px;
+}
+header
+{
+    display: grid;
+    grid-template-columns: 200px 70% auto;
+    background-color: rgba(251, 251, 251, 0.87);
+    padding: 20px 30px 20px 30px;
+}
+.menu
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin: auto auto auto 0;
+}
+.menu-button
+{
+    padding:0 10px 10px 0;
+    text-align: left;
+}
+.page-search
+{
+    color:rgba(114, 149, 253, 1)
+}
+.profile
+{
+    display: grid;
+    grid-template-columns: 80% 20%;
+}
+.profile-logo
+{
+    align: right;
+    height:30px;
+}
+.container-search
+{
+    flex-grow: 1;
+    margin:20px;
+    display:grid;
+    grid-template-columns: 10% 90%;
+}
+.form
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 200;
+    font-size: 16px;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+.border-button
+{
+    border: solid 1px rgba(114, 149, 253, 1);
+    border-radius: 3px;
+}
+.submit-button
+{
+    background-color: rgba(114, 149, 253, 1);
+    border: none;
+    padding: 5px 10px 5px 10px;
+    color: white;
+    border-radius: 2px;
+}
+.filter-button
+{
+    background-color: white;
+    padding: 5px 10px 5px 10px;
+    font-weight: 500;
+}
+.search-block
+{
+    display: flex;
+}
+.text-input
+{
+    margin:0 10px;
+    flex-grow: 1;
+}
+.bells-list {
+    margin: 0 20px;
+    background-color: rgba(251, 251, 251, 0.87);
+    height: calc(100vh - 160px); /* Устанавливаем фиксированную высоту для .bells-list, вычитаем высоту других блоков */
+    overflow-y: auto;
+    border-radius: 10px;/* Если контента будет больше, чем помещается, будет прокрутка */
+}
+.container-bells
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.header-bells-list
+{
+    margin: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size:20px;
+    font-weight: 600;
+}
+.bell
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 20px;
+    height: 115px;
+    border-bottom: 2px solid rgba(114, 149, 253, 1);
+}
+.bell-info
+{
+    margin: 10px 0px;
+}
+.bell_id
+{
+    font-weight:bolder;
+}
+.bell-date-time
+{
+    font-weight: 300;
+}
+.bell-employee-fio
+{
+    font-weight: 300;
+}
+.bell-text
+{
+    text-align: justify;
+    font-weight: 300;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.modal {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(230, 241, 249, 1);
+
+    border-radius: 10px;
+    max-width: 900px;
+    min-width: 600px;
+    width: 90%;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    margin: 10px;
+}
+
+.modal-header
+{
+    background-color: white;
+    border-radius: 10px 10px 0 0;
+    padding: 15px;
+    font-weight: bolder;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-info
+{
+    background-color: white;
+    border-radius: 0 0 10px 0;
+    padding: 15px;
+}
+
+.modal-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+}
+.modal-transcript
+{
+    margin:10px;
+}
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+#modal-close {
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+#filters
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 45%;
+    transform: translate(-45%, -50%);
+    background-color: rgba(243, 246, 249, 1);
+    height: 420px;
+    border-radius: 10px;
+    max-width: 900px;
+    min-width: 1000px;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    margin: 10px;
+}
+.filter-header
+{
+    background-color: white;
+    border-radius: 10px 10px 0 0;
+    padding: 10px;
+    font-weight: bolder;
+    font-size: 20px;
+}
+.filter-grid
+{
+    display:grid;
+    grid-template-columns: 33% 33% 34%;
+}
+.filter-block
+{
+    font-weight: 300;
+    margin: 20px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid rgba(237, 232, 232, 1);
+    height: 100px;
+    padding: 10px;
+}
+.filter-duration-input
+{
+    width:30px;
+}
+
+.filter-input-border
+{
+    border: 1px solid rgba(237, 232, 232, 1);
+    font-size: 20px;
+    border-radius: 2px;
+    font-weight: 300;
+}
+
+.filter-durations-block
+{
+    display:grid;
+    grid-template-columns: 50% 50%;
+}
+
+.filter-keyword
+{
+    background: white;
+    border-radius: 5px;
+    border: 1px solid rgba(237, 232, 232, 1);
+    margin: 20px;
+}
+.filter-keyword-header
+{
+    padding: 10px;
+}
+
+.filter-keywords-textarea
+{
+    resize: none;
+    rows: 4;
+    width: 97%;
+    margin: 10px;
+}
+
+.filter-buttons
+{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom:10px;
+}
+
+.filter-cancel
+{
+    background-color: rgba(234, 234, 234, 1);
+    color: rgba(98, 82, 82, 1);
+    padding: 5px;
+    border: none;
+    border-radius: 2px;
+    font-weight: bolder;
+}
+
+.filter-apply
+{
+    background-color: rgba(114, 149, 253, 1);
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 2px;
+    margin-left: 10px;
+    font-weight: bolder;
+    margin-right: 20px;
+}
+
