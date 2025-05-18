@@ -107,6 +107,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    "version": 1,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"}
+    },
+    "loggers": {
+        "elasticsearch": {
+            "handlers": ["console"],
+            "level": "DEBUG",  # Показывает все запросы к Elasticsearch
+        }
+    }
+}
+
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': 'http://elasticsearch:9200'

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>SpeechSearch</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/report.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@100;800&display=swap" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+<body>
+<header>
+    <div  class="logo">
+        SpeechSearch
+    </div>
+    <div class="menu">
+        <a href="{% url 'main_page' %}" class="menu-button page-chat">Поиск</a>
+        <a href="{% url 'report' %}"  class="menu-button page-reports">Отчеты</a>
+        <a href="{% url 'chat' %}" class="menu-button page-chat">Чат</a>
+    </div>
+    <div class="profile">
+        <span class="profile-name"></span>
+        <a class='profile-img' href="">
+            <img src="{% static 'images/profile_logo.png' %}"  class="profile-logo">
+        </a>
+    </div>
+</header>
+<div class="report-container">
+    <form>
+        <div class="report-select-container">
+            <span class="report-select-span">Отчет:</span>
+            <select class="report-select">
+                <option value="duration">
+                    Средняя продолжительность
+                </option>
+                <option value="summary_bells">
+                    Количество звонков
+                </option>
+            </select>
+        </div>
+        <div class="filter-menu">
+            <div class="filter-operator">
+                <span class="operator-text">
+                    Оператор:
+                </span>
+                <select id="filter-select" name="operator_id" multiple>
+                  {% for employee in employees %}
+                    <option value="{{ employee.id_employee }}">
+                      {{ employee.surname }} {{ employee.name }} {{ employee.second_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+            </div>
+            <div class="date-container">
+                <span>Период с:</span>
+                <input class="date-from border-button" name="date_from" type="date">
+                <span>До:</span>
+                <input class="date-before border-button" name="date_before" type="date">
+            </div>
+            <div class="filter-submit">
+                <input class="submit-button" type="submit" value="Создать">
+            </div>
+        </div>
+    </form>
+    <canvas id="durationChart" width="600" height="300"></canvas>
+    <table id="duration-table" border="1" style="margin-top:20px; width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+            <th>Оператор</th>
+            <th>Средняя продолжительность (сек)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Данные сюда вставятся через JS -->
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+  $(document).ready(function() {
+    $('#filter-select').select2({
+      placeholder: "Выберите оператора",
+      closeOnSelect: false,   // остаётся открытым для мультивыбора
+      width: 'resolve',
+      allowClear: true
+    });
+  });
+</script>
+<script>
+  function drawChart(data) {
+    const ctx = document.getElementById('durationChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.map(item => item.label),
+        datasets: [{
+          label: 'Средняя продолжительность (сек)',
+          data: data.map(item => item.value),
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  $('form').on('submit', function(e) {
+      e.preventDefault();
+
+      const operatorIds = $('#filter-select').val();
+      const dateFrom = $('input[name="date_from"]').val();
+      const dateBefore = $('input[name="date_before"]').val();
+      const reportType = $('.report-select').val();
+
+      if (reportType !== 'duration') return;
+
+      $.ajax({
+        url: '{% url "average_duration_report" %}',
+        data: {
+          'operator_id[]': operatorIds,
+          'date_from': dateFrom,
+          'date_before': dateBefore
+        },
+        traditional: true,  // ВАЖНО для правильной сериализации массивов
+        success: function(response) {
+          renderChartAndTable(response.data);
+        }
+      });
+    });
+
+
+
+    function renderChartAndTable(data) {
+  // data — массив {label: 'ФИО', value: число}
+    document.getElementById('duration-table').style.display = 'table';
+  // 1. Построение графика (Chart.js)
+  const ctx = document.getElementById('durationChart').getContext('2d');
+  if(window.myChart) {
+    window.myChart.destroy();
+  }
+  window.myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.label),
+      datasets: [{
+        label: 'Средняя продолжительность (сек)',
+        data: data.map(d => d.value),
+        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  // 2. Заполнение таблицы
+  const tbody = document.querySelector('#duration-table tbody');
+  tbody.innerHTML = ''; // очистить таблицу
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+
+    const tdLabel = document.createElement('td');
+    tdLabel.textContent = row.label;
+    tr.appendChild(tdLabel);
+
+    const tdValue = document.createElement('td');
+    tdValue.textContent = row.value;
+    tr.appendChild(tdValue);
+
+    tbody.appendChild(tr);
+  });
+  const total = data.reduce((acc, cur) => acc + cur.value, 0);
+  const avg = (data.length > 0) ? (total / data.length).toFixed(2) : 0;
+
+  const trAvg = document.createElement('tr');
+  trAvg.style.fontWeight = 'bold';
+
+  const tdAvgLabel = document.createElement('td');
+  tdAvgLabel.textContent = 'Общее среднее';
+  trAvg.appendChild(tdAvgLabel);
+
+  const tdAvgValue = document.createElement('td');
+  tdAvgValue.textContent = avg;
+  trAvg.appendChild(tdAvgValue);
+
+  tbody.appendChild(trAvg);
+
+}
+
+
+</script>
+
+</html>

@@ -15,13 +15,13 @@
             SpeechSearch
         </div>
         <div class="menu">
-            <span class="menu-button page-search">Поиск</span>
-            <span class="menu-button page-reports">Отчеты</span>
-            <span class="menu-button page-chat">Чат</span>
+            <a href="{% url 'main_page' %}" class="menu-button page-chat">Поиск</a>
+            <a href="{% url 'report' %}"  class="menu-button page-reports">Отчеты</a>
+            <a href="{% url 'chat' %}" class="menu-button page-chat">Чат</a>
         </div>
         <div class="profile">
             <span class="profile-name"></span>
-            <a href="">
+            <a  class="profile-img" href="">
                 <img src="{% static 'images/profile_logo.png' %}"  class="profile-logo">
             </a>
         </div>

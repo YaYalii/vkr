@@ -1,0 +1,139 @@
+*
+{
+    box-sizing: border-box;
+}
+body
+{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(230, 241, 249, 1);
+    height: 100vh;
+    margin: 0;
+    text-indent: 0;
+    margin: 0px;
+    min-height: 600px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+form
+{
+    padding-top: 10px;
+}
+.prompt-container {
+    border: 1px solid rgba(237, 232, 232, 1);
+    margin-bottom: 20px;
+    border-radius: 10px;
+
+    /* Добавим flex-контейнер */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Важно: прижимаем содержимое вниз */
+    height: 100%; /* или нужная высота */
+}
+
+.prompt-list {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Прижимаем .prompt-start-text вниз внутри .prompt-list */
+}
+.prompt-start-text
+{
+    padding-left: 20px;
+    padding-bottom: 10px;
+
+}
+.logo
+{
+    font-family: 'K2D';
+    font-size: 28px;
+    padding-right: 10px;
+    font-weight: 500;
+}
+
+header
+{
+    display: grid;
+    grid-template-columns: 200px 4fr 1fr;
+    background-color: rgba(251, 251, 251, 0.87);
+    padding: 20px 30px 20px 30px;
+}
+
+a
+{
+    all: unset;
+}
+.chat-container
+{
+    flex: 1 1 auto;
+    margin: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 15px;
+}
+.chat-grid
+{
+    height: calc(100% - 40px);
+    display: grid;
+    grid-template-rows: 75fr 25fr;
+    padding: 10px;
+}
+.prompt-chat-container
+{
+    display: grid;
+    height:100%;
+    grid-template-columns: 95% 5%;
+    border: 1px solid rgba(237, 232, 232, 1);
+    border-radius: 10px;
+}
+.chat-input-textarea
+{
+    width:98%;
+    resize: none;
+    border: none;
+}
+.submit-button
+{
+    background: none;
+    border: none;
+    padding-top: 7px;
+    cursor: pointer;
+    width:100%;
+}
+.submit-button-icon
+{
+    width: 24px;
+    height: 24px;
+}
+
+.profile-img
+{
+    float:right;
+}
+
+.chat-header
+{
+    display: block;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+.menu
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin: auto auto auto 0;
+}
+.menu-button
+{
+    padding:0 10px 10px 0;
+    text-align: left;
+}
+.profile-logo
+{
+    align: right;
+    height:30px;
+}

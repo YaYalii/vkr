@@ -1,0 +1,153 @@
+.menu
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin: auto auto auto 0;
+}
+
+.menu-button
+{
+    padding:0 10px 10px 0;
+    text-align: left;
+}
+
+.profile-logo
+{
+    align: right;
+    height:30px;
+}
+
+header
+{
+    display: grid;
+    grid-template-columns: 200px 4fr 1fr;
+    background-color: rgba(251, 251, 251, 0.87);
+    padding: 20px 30px 20px 30px;
+}
+
+a
+{
+    all: unset;
+}
+
+.logo
+{
+    font-family: 'K2D';
+    font-size: 28px;
+    padding-right: 10px;
+    font-weight: 500;
+}
+
+.profile-img
+{
+    float:right;
+}
+
+body
+{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(230, 241, 249, 1);
+    height: 100vh;
+    margin: 0;
+    text-indent: 0;
+    margin: 0px;
+    min-height: 600px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+*
+{
+    box-sizing: border-box;
+}
+
+.report-select-container
+{
+    margin-left:10px;
+    margin-top:10px;
+}
+
+.report-select-span
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.filter-menu
+{
+    margin: 10px;
+    display: flex;
+    height: 35px;
+}
+
+.submit-button
+{
+    background-color: rgba(114, 149, 253, 1);
+    border: none;
+    padding: 5px 10px 5px 10px;
+    color: white;
+    border-radius: 2px;
+    margin-left: 20px;
+}
+
+.date-from
+{
+    margin-right: 20px;
+}
+
+.filter-operator
+{
+    margin-right: 10px;
+}
+
+/* Изменить ширину поля выбора */
+.select2-container {
+  width: 250px !important;  /* или auto, или 100% */
+  font-size: 14px;
+  min-height: 10px !important;
+  line-height: 1;/* шрифт всего контейнера */
+}
+canvas
+{
+    height: 400px !important;
+    width: 60% !important;
+    margin: auto;
+}
+/* Изменить шрифт выпадающего списка */
+.select2-dropdown {
+  font-size: 14px;
+}
+
+/* Шрифт внутри выбранных элементов */
+.select2-selection__rendered {
+  font-size: 14px;
+}
+
+/* Шрифт в выпадающих пунктах */
+.select2-results__option {
+  font-size: 14px;
+}
+
+#duration-table {
+  display: none;
+  width: 600px !important;
+  margin: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 3px solid #3498db;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#duration-table th, #duration-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+}
+
+
+
+
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>SpeechSearch</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@100;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div  class="logo">
+        SpeechSearch
+    </div>
+    <div class="menu">
+        <a href="{% url 'main_page' %}" class="menu-button page-chat">Поиск</a>
+        <a href="{% url 'report' %}"  class="menu-button page-reports">Отчеты</a>
+        <a href="{% url 'chat' %}" class="menu-button page-chat">Чат</a>
+    </div>
+    <div class="profile">
+        <span class="profile-name"></span>
+        <a  class="profile-img" href="">
+            <img src="{% static 'images/profile_logo.png' %}"  class="profile-logo">
+        </a>
+    </div>
+</header>
+<div class="chat-container">
+    <span class="chat-header">Чат-ассистент</span>
+    <div class="chat-grid">
+        <div class="prompt-container">
+            <div class="prompt-list" id="chat-messages">
+                <div class="prompt-start-text">
+                    <span>Введите ваш запрос.</span>
+                </div>
+            </div>
+        </div>
+        <form id="chat-form">
+            <div class="prompt-chat-container">
+                <div>
+                    <textarea class="chat-input-textarea" id="user-input" required></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="submit-button">
+                        <img src="{% static 'images/send_prompt_button.png' %}" class="submit-button-icon">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Добавляем сообщение пользователя в чат
+    addMessage(message, 'user');
+    input.value = '';
+
+    try {
+        // Отправляем запрос на сервер
+        const response = await fetch('/api/giga-search/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ prompt: message })
+        });
+
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+            // Формируем ответ от ассистента
+            let assistantResponse = "Найдены следующие диалоги:\n\n";
+            data.results.forEach(result => {
+                assistantResponse += `🔹 ${result.text}\n`;
+                if (result.reason) {
+                    assistantResponse += `   (${result.reason})\n\n`;
+                }
+            });
+
+            addMessage(assistantResponse, 'assistant');
+        } else {
+            addMessage("По вашему запросу ничего не найдено.", 'assistant');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        addMessage("Произошла ошибка при обработке запроса.", 'assistant');
+    }
+});
+
+function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text;
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+</script>
+</body>
+</html>
