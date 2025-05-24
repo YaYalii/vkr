@@ -1,48 +1,29 @@
-*
-{
+* {
     box-sizing: border-box;
 }
-body
-{
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(230, 241, 249, 1);
-    height: 100vh;
+
+a {
+    all: unset;
+}
+
+body {
     margin: 0;
-    text-indent: 0;
-    margin: 0px;
-    min-height: 600px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-}
-form
-{
-    padding-top: 10px;
-}
-.prompt-container {
-    border: 1px solid rgba(237, 232, 232, 1);
-    margin-bottom: 20px;
-    border-radius: 10px;
-
-    /* Добавим flex-контейнер */
+    padding: 0;
+    height: 100vh;
+    background-color: #e6f1f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Важно: прижимаем содержимое вниз */
-    height: 100%; /* или нужная высота */
 }
 
-.prompt-list {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Прижимаем .prompt-start-text вниз внутри .prompt-list */
+header {
+    display: grid;
+    grid-template-columns: 200px 1fr 100px;
+    background-color: #fbfbfb;
+    padding: 20px 30px;
+    align-items: center;
 }
-.prompt-start-text
-{
-    padding-left: 20px;
-    padding-bottom: 10px;
 
-}
 .logo
 {
     font-family: 'K2D';
@@ -51,89 +32,159 @@ form
     font-weight: 500;
 }
 
-header
-{
-    display: grid;
-    grid-template-columns: 200px 4fr 1fr;
-    background-color: rgba(251, 251, 251, 0.87);
-    padding: 20px 30px 20px 30px;
+.menu {
+    display: flex;
+    gap: 20px;
+    font-weight: 500;
+    font-size: 18px;
 }
 
-a
-{
-    all: unset;
+.menu-button {
+    cursor: pointer;
 }
-.chat-container
-{
-    flex: 1 1 auto;
+
+.profile {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.profile-logo {
+    height: 30px;
+}
+
+.chat-container {
+    flex: 1;
     margin: 20px;
-    box-sizing: border-box;
     background-color: white;
     border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: calc(100vh - 140px); /* Подстрой высоту под header и отступы */
 }
-.chat-grid
-{
-    height: calc(100% - 40px);
-    display: grid;
-    grid-template-rows: 75fr 25fr;
-    padding: 10px;
+
+.chat-header {
+    font-size: 20px;
+    font-weight: 600;
+    padding: 15px 20px;
+    flex-shrink: 0;
 }
-.prompt-chat-container
-{
-    display: grid;
-    height:100%;
-    grid-template-columns: 95% 5%;
-    border: 1px solid rgba(237, 232, 232, 1);
+
+.chat-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.prompt-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
     border-radius: 10px;
+    padding: 10px;
+    background-color: #fff;
 }
-.chat-input-textarea
-{
-    width:98%;
+
+.prompt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 100%;
+}
+
+.form-container {
+    padding: 10px 10px 0 0;
+    flex-shrink: 0;
+    background-color: white;
+    border-top: 1px solid rgba(237, 232, 232, 1);
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+    word-break: break-word;
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: #daf1ff;
+    text-align: right;
+    border-bottom-right-radius: 0;
+}
+
+.message.assistant {
+    align-self: flex-start;
+    background-color: #f5f5f5;
+    text-align: left;
+    border-bottom-left-radius: 0;
+    max-width: 70%;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+    word-break: break-word;
+}
+
+.typing span::after {
+    content: '▍';
+    animation: blink 1s infinite;
+}
+
+.prompt-chat-container {
+    display: flex;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.chat-input-textarea {
+    flex: 1;
     resize: none;
     border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    outline: none;
+    background-color: #f5f5f5;
+    margin-right: 10px;
+    font-family: inherit;
+    min-height: 50px;
 }
-.submit-button
-{
-    background: none;
+
+.submit-button {
+    background-color: white;
     border: none;
-    padding-top: 7px;
+    border-radius: 10px;
+    padding: 10px;
     cursor: pointer;
-    width:100%;
-}
-.submit-button-icon
-{
-    width: 24px;
-    height: 24px;
+    transition: background-color 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.profile-img
-{
-    float:right;
+.submit-button:hover {
+    background-color: rgba(217, 217, 217, 0.5);
 }
 
-.chat-header
-{
-    display: block;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 20px;
-    font-weight: 500;
-    padding-left: 20px;
-    padding-top: 10px;
+.submit-button-icon {
+    width: 20px;
+    height: 20px;
 }
-.menu
-{
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 20px;
-    font-weight: 500;
-    margin: auto auto auto 0;
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-.menu-button
-{
-    padding:0 10px 10px 0;
-    text-align: left;
+
+@keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
 }
-.profile-logo
-{
-    align: right;
-    height:30px;
-}
+
+

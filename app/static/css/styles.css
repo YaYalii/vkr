@@ -331,3 +331,9 @@ header
     margin-right: 20px;
 }
 
+#filter-select
+{
+    width: 250px;
+    font-size: 18px;
+}
+

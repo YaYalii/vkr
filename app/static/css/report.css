@@ -112,8 +112,8 @@ body
 }
 canvas
 {
-    height: 400px !important;
-    width: 60% !important;
+    height: 300px !important;
+    width: auto !important;
     margin: auto;
 }
 /* Изменить шрифт выпадающего списка */

@@ -17,16 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
-from app.views import chat, GigaSearchView
+# from app.views import chat, GigaSearchView
 
 import app.views
 
 urlpatterns = [
-    path('api/giga-search/', GigaSearchView.as_view(), name='giga-search'),
+    # path('api/giga-search/', GigaSearchView.as_view(), name='giga-search'),
     path('download/<int:bell_id>/', views.download_recording, name='download_recording'),
     path('report/average-duration/', views.average_duration_report, name='average_duration_report'),
+    path('admin-data/', views.admin_panel_data, name="admin_panel_data"),
+    path('profile', views.profile, name='profile'),
     path('admin/', admin.site.urls),
     path('report/', views.employees_list, name='report'),
     path('chat/', views.chat, name='chat'),
+    path('rag/', views.rag_view, name='rag'),
     path('', views.bells_list, name='main_page'),
 ]

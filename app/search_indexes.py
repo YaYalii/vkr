@@ -1,117 +1,158 @@
 from django_elasticsearch_dsl import Document, fields
-from django_elasticsearch_dsl.registries import registry
+from django_elasticsearch_dsl.registries import registry  # Добавляем импорт registry
 from .models import Bell
-from gigachat import GigaChat
-import json
-import hashlib
 
-
-@registry.register_document
+@registry.register_document  # Регистрируем документ
 class BellDocument(Document):
-    # Поля Elasticsearch
+    class Index:
+        name = 'bells'  # Имя индекса в Elasticsearch
+        settings = {
+            'number_of_shards': 1,  # Количество шардов
+            'number_of_replicas': 0  # Количество реплик
+        }
+
+    # Явно указываем поля для индексации
     id_bell = fields.IntegerField(attr='id_bell')
     datetime_bell = fields.DateField()
     call_duration = fields.IntegerField()
-    text_transcript = fields.TextField(attr='text_transripct')
-    keywords = fields.KeywordField(attr='keywords_field', multi=True)
-
-    class Index:
-        name = 'bells'
-        settings = {
-            'number_of_shards': 1,
-            'number_of_replicas': 0,
-            'analysis': {
-                'analyzer': {
-                    'russian': {
-                        'type': 'custom',
-                        'tokenizer': 'standard',
-                        'filter': ['lowercase']
-                    }
-                }
-            }
-        }
+    text_transcript = fields.TextField(attr='text_transripct')  # Используем attr для связи с полем модели
 
     class Django:
-        model = Bell
-        fields = []
+        model = Bell  # Указываем модель
+        fields = []  # Можно оставить пустым, так как поля объявлены выше
 
-    def prepare_keywords_field(self, instance):
-        """Подготовка ключевых слов для индексации"""
-        text = instance.text_transripct or ''
-        if text:
-            words = [word.lower() for word in text.split() if len(word) > 3]
-            return list(set(words))[:10]  # Удаляем дубли и берем топ-10
-        return []
-
-    @classmethod
-    def giga_search(cls, prompt, limit=5):
-        """Гибридный поиск через GigaChat"""
-        # 1. Предварительный поиск в Elasticsearch
-        basic_results = cls.search().query(
-            'multi_match',
-            query=prompt,
-            fields=['text_transcript^3', 'keywords'],
-            fuzziness='AUTO'
-        )[:20].execute()
-
-        if not basic_results:
-            return []
-
-        # 2. Подготовка данных для GigaChat
-        dialogs = [
-            {
-                "id": hit.meta.id,
-                "text": hit.text_transcript,
-                "keywords": hit.keywords
-            }
-            for hit in basic_results
-        ]
-
-        # 3. Запрос к GigaChat
-        giga = GigaChat(credentials="YTFjOGUzYWQtY2ZjYS00MjAzLTk5YzctMGE4MDc1NzBmODBiOjM0NDMxYTZjLTJjODEtNDViMS05YzA1LTVlNzViMWQ5OTVhMg==", verify_ssl_certs=False)
-
-        try:
-            response = giga.chat(
-                f"""Анализируй телефонные диалоги и возвращай JSON с релевантными результатами.
-
-                Запрос пользователя: {prompt}
-
-                Критерии анализа:
-                - Соответствие смыслу запроса
-                - Учет контекста диалога
-                - Важность ключевых слов
-
-                Диалоги для анализа: {json.dumps(dialogs, ensure_ascii=False)}
-
-                Формат ответа:
-                {{
-                    "results": [
-                        {{
-                            "id": "идентификатор",
-                            "relevance_score": 0-1,
-                            "reason": "обоснование"
-                        }}
-                    ]
-                }}"""
-            )
-
-            analyzed = json.loads(response.choices[0].message.content)
-        except Exception as e:
-            print(f"GigaChat error: {str(e)}")
-            analyzed = {"results": []}
-
-        # 4. Формирование результатов
-        results = []
-        for item in analyzed.get("results", [])[:limit]:
-            original = next((hit for hit in basic_results if hit.meta.id == item["id"]), None)
-            if original:
-                results.append({
-                    "id": original.meta.id,
-                    "call_id": original.id_bell,
-                    "text": original.text_transcript,
-                    "datetime": original.datetime_bell,
-                    "score": item.get("relevance_score", 0),
-                    "reason": item.get("reason", "")
-                })
-
-        return sorted(results, key=lambda x: x["score"], reverse=True)
+    def get_queryset(self):
+        """Оптимизация запроса к БД."""
+        return super().get_queryset().select_related('id_employee_fk')
+# from django_elasticsearch_dsl import Document, fields
+# from django_elasticsearch_dsl.registries import registry
+# from .models import Bell
+# from sentence_transformers import SentenceTransformer
+# import numpy as np
+#
+# # Инициализация модели для эмбеддингов (вынесено в отдельный модуль для переиспользования)
+# embedding_model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
+#
+#
+# @registry.register_document
+# class BellDocument(Document):
+#     # Основные поля
+#     id_bell = fields.IntegerField(attr='id_bell')
+#     datetime_bell = fields.DateField()
+#     call_duration = fields.IntegerField()
+#     text_transcript = fields.TextField(
+#         attr='text_transripct',
+#         analyzer='russian',  # Добавляем русский анализатор
+#         fields={
+#             'keyword': fields.KeywordField(),  # Для точного match
+#             'stemmed': fields.TextField(analyzer='russian')  # Для поиска с учетом морфологии
+#         }
+#     )
+#
+#     # Новые поля для векторного поиска
+#     embedding = fields.DenseVectorField(
+#         dims=384,  # Размерность модели sentence-transformers
+#         attr='embedding_field'  # Специальный метод для получения embedding
+#     )
+#
+#     # Метаданные для фильтрации
+#     employee_id = fields.IntegerField(attr='id_employee_fk_id')
+#     department = fields.KeywordField(attr='id_employee_fk.department')  # Пример связи
+#
+#     class Index:
+#         name = 'bells'
+#         settings = {
+#             'number_of_shards': 1,
+#             'number_of_replicas': 0,
+#             'analysis': {  # Конфигурация анализатора для русского языка
+#                 'analyzer': {
+#                     'russian': {
+#                         'type': 'custom',
+#                         'tokenizer': 'standard',
+#                         'filter': [
+#                             'lowercase',
+#                             'russian_morphology',
+#                             'english_morphology'
+#                         ]
+#                     }
+#                 }
+#             }
+#         }
+#
+#     class Django:
+#         model = Bell
+#         fields = []  # Все необходимые поля объявлены выше
+#
+#         # Оптимизация связанных полей
+#         related_models = ['Employee']  # Укажите вашу модель Employee
+#
+#     def get_queryset(self):
+#         """Оптимизированный запрос с предзагрузкой связанных данных"""
+#         return super().get_queryset().select_related('id_employee_fk')
+#
+#     def get_instances_from_related(self, related_instance):
+#         """Обновление индекса при изменении связанных моделей"""
+#         if isinstance(related_instance, Employee):  # Укажите вашу модель Employee
+#             return related_instance.bell_set.all()  # Укажите правильное имя related_name
+#         return None
+#
+#     def prepare_embedding_field(self, instance):
+#         """Подготовка векторного представления текста"""
+#         text = instance.text_transripct or ''  # Исправьте опечатку в вашем поле
+#         if text:
+#             return embedding_model.encode(text).tolist()
+#         return None
+#
+#     @classmethod
+#     def search_vector(cls, query_text, limit=10):
+#         """Поиск по семантическому сходству"""
+#         query_embedding = embedding_model.encode(query_text).tolist()
+#
+#         return cls.search().query(
+#             'script_score',
+#             query={'match_all': {}},
+#             script={
+#                 'source': 'cosineSimilarity(params.query_vector, "embedding") + 1.0',
+#                 'params': {'query_vector': query_embedding}
+#             }
+#         )[:limit]
+#
+#     @classmethod
+#     def hybrid_search(cls, query_text, limit=10):
+#         """Гибридный поиск (семантический + текстовый)"""
+#         # Векторный поиск
+#         vector_results = cls.search_vector(query_text, limit)
+#
+#         # Текстовый поиск
+#         text_results = cls.search().query(
+#             'multi_match',
+#             query=query_text,
+#             fields=['text_transcript', 'text_transcript.stemmed'],
+#             fuzziness='AUTO'
+#         )[:limit]
+#
+#         # Объединение результатов (можно усложнить логику)
+#         combined = {}
+#         for idx, result in enumerate(vector_results):
+#             combined[result.meta.id] = {
+#                 'result': result,
+#                 'score': result.meta.score * 0.7  # Вес векторного поиска
+#             }
+#
+#         for idx, result in enumerate(text_results):
+#             if result.meta.id in combined:
+#                 combined[result.meta.id]['score'] += 0.3  # Вес текстового поиска
+#             else:
+#                 combined[result.meta.id] = {
+#                     'result': result,
+#                     'score': 0.3
+#                 }
+#
+#         # Сортировка по комбинированному score
+#         sorted_results = sorted(
+#             combined.values(),
+#             key=lambda x: x['score'],
+#             reverse=True
+#         )
+#
+#         return [item['result'] for item in sorted_results[:limit]]

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 class Role(models.Model):
     id_role = models.AutoField(primary_key=True)
@@ -55,8 +56,9 @@ class Bell(models.Model):
     client_phone = models.CharField(max_length=20)
     call_duration = models.IntegerField()
     text_transripct = models.TextField(null=True, blank=True)
-    vector = models.TextField(null=True, blank=True)
+    # vector = models.TextField(null=True, blank=True)
     keyword = models.TextField(null=True, blank=True)
+    embedding = ArrayField(models.FloatField(), null=True, blank=True)
 
     def __str__(self):
         return f"Call {self.id_bell} at {self.datetime_bell}"

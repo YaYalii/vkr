@@ -1,0 +1,179 @@
+body
+{
+    text-indent: 0;
+    margin: 0px;
+    background-color: rgba(230, 241, 249, 1);
+    height: 100%;
+    min-width: 1000px;
+}
+
+.logo
+{
+    font-family: 'K2D';
+    font-size: 28px;
+    padding-right: 10px;
+    font-weight: 500;
+}
+
+.menu
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin: auto auto auto 0;
+}
+
+.menu-button
+{
+    padding:0 10px 10px 0;
+    text-align: left;
+}
+
+a
+{
+    all: unset;
+}
+
+.profile-img
+{
+    float:right;
+}
+
+.profile
+{
+    display: grid;
+    grid-template-columns: 80% 20%;
+}
+
+.profile-img
+{
+    float:right;
+}
+
+.profile-logo
+{
+    align: right;
+    height:30px;
+}
+
+header
+{
+    display: grid;
+    grid-template-columns: 200px 4fr 1fr;
+    background-color: rgba(251, 251, 251, 0.87);
+    padding: 20px 30px 20px 30px;
+}
+
+.profile-container
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size:20px;
+    font-weight: 500;
+    margin: 20px 20px;
+    padding: 10px;
+    background-color: rgba(251, 251, 251, 0.87);
+    height: calc(100vh - 160px); /* Устанавливаем фиксированную высоту для .bells-list, вычитаем высоту других блоков */
+    overflow-y: auto;
+    border-radius: 10px;/* Если контента будет больше, чем помещается, будет прокрутка */
+}
+
+.img-logout
+{
+    float: right;
+    height: 20px;
+}
+
+#profile-info
+{
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+#admin-info
+{
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+.profile-info-box
+{
+    padding-top:10px;
+}
+
+.profile-info-text-input
+{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size:20px;
+    width: 300px;
+}
+
+.profile-changePassword-button
+{
+    background-color: rgba(114, 149, 253, 1);
+    border: none;
+    padding: 5px 10px 5px 10px;
+    color: white;
+    border-radius: 2px;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.show-password-image
+{
+    height: 20px;
+}
+
+.show-password-button
+{
+    all: unset;
+}
+
+.active-button
+{
+    color: rgba(114, 149, 253, 1) !important;
+}
+
+.profile-menu-button
+{
+    all: unset;
+}
+tbody
+{
+    font-size: 18px;
+}
+.th-fio
+{
+    width:350px;
+}
+.th-login
+{
+    width: 175px;
+}
+.th-password
+{
+    width: 175px;
+}
+.th-sip_phone
+{
+    width: 250px;
+}
+.th-external_phone
+{
+    width: 250px;
+}
+
+table
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+th
+{
+    height: 40px;
+}
+td
+{
+    height: 40px;
+    border-top: 2px solid rgba(231, 242, 253, 1);
+
+}

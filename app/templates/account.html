@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+{% load static %}
+{% load dict_extras %}
+<html>
+<head>
+    <title>SpeechSearch</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div  class="logo">
+        SpeechSearch
+    </div>
+    <div class="menu">
+        <a href="{% url 'main_page' %}" class="menu-button page-chat">Поиск</a>
+        <a href="{% url 'report' %}"  class="menu-button page-reports">Отчеты</a>
+        <a href="{% url 'chat' %}" class="menu-button page-chat">Чат</a>
+    </div>
+    <div class="profile">
+        <span class="profile-name"></span>
+        <a  class="profile-img" href="{% url 'profile' %}">
+            <img src="{% static 'images/profile_logo.png' %}"  class="profile-logo">
+        </a>
+    </div>
+</header>
+<div class="profile-container">
+    <div class="profile-menu">
+        <button id="panel-admin" class="profile-menu-button">
+            Панель администратора
+        </button>
+        <button id="profile-user" id="active-button" class="profile-menu-button">
+            Личный кабинет
+        </button>
+        <img class="img-logout" src="{% static 'images/logout.png' %}">
+    </div>
+    <div id="profile-info">
+        <div class="profile-fio profile-info-box">
+            <span class="profile-info-text">
+                ФИО:
+            </span><br>
+            <input class="profile-info-text-input" type="text" value="Воронин Илья Яковлевич">
+        </div>
+        <div class="profile-login profile-info-box">
+            <span class="profile-info-text">
+                Логин:
+            </span><br>
+            <input class="profile-info-text-input" type="text" value="voroniniy">
+        </div>
+        <div class="profile-sip profile-info-box">
+            <span class="profile-info-text">
+                sip:
+            </span><br>
+            <input class="profile-info-text-input" type="text" value="sip@3111:speechsearch.ru">
+        </div>
+        <div class="profile-externalPhone profile-info-box">
+            <span class="profile-info-text">
+                Внешний номер:
+            </span><br>
+            <input class="profile-info-text-input" type="text" value="+7 (919) 952-90-49">
+        </div>
+        <div class="profile-password profile-info-box">
+            <span class="profile-info-text">
+                Пароль:
+            </span><br>
+            <input class="profile-info-text-input" type="text" value="**********">
+            <button class="show-password-button">
+                <img class="show-password-image" src="{% static 'images/show_password.png' %}">
+            </button>
+        </div>
+        <div class="profile-change-password profile-info-box">
+            <button class="profile-changePassword-button">Сохранить</button>
+        </div>
+    </div>
+    <div id="admin-info" style="display: none;">
+        <table id="admin-table">
+            <thead>
+                <tr>
+                    <th class="th-fio">ФИО</th>
+                    <th class="th-login">Логин</th>
+                    <th class="th-password">Пароль</th>
+                    <th class="th-showPassword"></th>
+                    <th class="th-sip_phone">SIP-телефон</th>
+                    <th class="th-external_phone">Внешний номер</th>
+                    <th class="th-role">Роль</th>
+                    <th class="th-delete"></th>
+                    <th class="th-update"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+      </table>
+    </div>
+</div>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const adminBtn = document.getElementById("panel-admin");
+    const profileBtn = document.getElementById("profile-user");
+
+    const profileInfo = document.getElementById("profile-info");
+    const adminPanel = document.getElementById("admin-info");
+
+    adminBtn.addEventListener("click", function () {
+      profileInfo.style.display = "none";
+      adminPanel.style.display = "block";
+
+      adminBtn.classList.add("active-button");
+      profileBtn.classList.remove("active-button");
+
+      loadAdminData(); // ЗАГРУЗКА ДАННЫХ
+    });
+
+    profileBtn.addEventListener("click", function () {
+
+      profileInfo.style.display = "block";
+      adminPanel.style.display = "none";
+
+      profileBtn.classList.add("active-button");
+      adminBtn.classList.remove("active-button");
+    });
+  });
+
+    function loadAdminData() {
+      fetch('admin-data/')
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.querySelector("#admin-table tbody");
+          tbody.innerHTML = ""; // Очищаем перед вставкой
+
+          data.users.forEach(user => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td class="td-fio">${user.full_name}</td>
+              <td class="td-login">${user.login}</td>
+              <td class="td-password" data-real-password="${user.password}" data-hidden="true">**********</td>
+              <td class="td-showPassword"><button class="show-password-button"><img class="show-password-image" src="{% static 'images/show_password.png' %}"></button></td>
+              <td class="td-sip_phone">${user.sip_phone}</td>
+              <td class="td-external_phone">${user.external_phone}</td>
+              <td class="td-role">${user.role}</td>
+              <td class="td-deleteUser"><button class="show-password-button"><img class="show-password-image" src="{% static 'images/delete_button.png' %}"></button></td>
+              <td class="td-updateUser"><button class="show-password-button"><img class="show-password-image" src="{% static 'images/update_button.png' %}"></button></td>
+            `;
+            tbody.appendChild(row);
+
+            row.querySelector(".show-password-button").addEventListener("click", function () {
+              const passwordCell = row.querySelector(".td-password");
+              const isHidden = passwordCell.dataset.hidden === "true";
+
+              if (isHidden) {
+                passwordCell.textContent = passwordCell.dataset.realPassword;
+                passwordCell.dataset.hidden = "false";
+              } else {
+                passwordCell.textContent = "**********";
+                passwordCell.dataset.hidden = "true";
+              }
+            });
+
+          });
+        })
+        .catch(error => console.error("Ошибка загрузки данных администратора:", error));
+    }
+
+</script>
+
+</html>

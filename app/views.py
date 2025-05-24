@@ -1,8 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
-from .models import Bell
-from .models import EmployeePhone
-from .models import Employee
+from .models import Bell, EmployeePhone, Employee, Phone, User
 from .utils.minio_client import get_call_audio
 from app.search_indexes import BellDocument
 from elasticsearch_dsl import Q
@@ -14,11 +12,49 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db.models import Avg
 from datetime import datetime
+import json
+from .rag_chain import run_rag_query
+from .show_chroma_data import giga_query
+
 def chat(request):
     return render(request, "chat.html")
 
 def report(request):
     return render(request, "reports.html")
+
+def admin_panel_data(request):
+    data = []
+
+    users = User.objects.select_related('id_employee_fk', 'id_role_fk')
+
+    for user in users:
+        employee = user.id_employee_fk
+        role = user.id_role_fk.name_role if user.id_role_fk else ""
+
+        # Находим телефон
+        phone = (
+            EmployeePhone.objects.filter(id_employee_fk=employee)
+            .select_related('id_phone_fk')
+            .first()
+        )
+
+        sip_phone = phone.id_phone_fk.sip_phone if phone and phone.id_phone_fk else ""
+        external_phone = phone.id_phone_fk.external_phone if phone and phone.id_phone_fk else ""
+
+        data.append({
+            "full_name": f"{employee.surname} {employee.name} {employee.second_name or ''}",
+            "login": user.login,
+            "password": user.password,
+            "sip_phone": sip_phone,
+            "external_phone": external_phone,
+            "role": role
+        })
+
+    return JsonResponse({"users": data})
+
+
+def profile(request):
+    return  render(request, "account.html")
 
 def average_duration_report(request):
     operator_ids = request.GET.getlist('operator_id[]')
@@ -50,43 +86,22 @@ def average_duration_report(request):
 
     return JsonResponse({'data': data})
 
-@method_decorator(csrf_exempt, name='dispatch')
-class GigaSearchView(APIView):
-    def post(self, request):
-        prompt = request.data.get("prompt")
-        if not prompt:
-            return Response(
-                {"error": "Parameter 'prompt' is required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+@csrf_exempt
+def rag_view(request):
+    if request.method == "POST":
         try:
-            limit = int(request.data.get("limit", 5))
-            results = BellDocument.giga_search(prompt, limit)
+            data = json.loads(request.body)
+            query = data.get("query", "")
+            if not query:
+                return JsonResponse({"reply": "Запрос пуст."})
 
-            # Форматируем ответ для чата
-            formatted_results = []
-            for result in results:
-                formatted_results.append({
-                    "text": result.text_transcript,
-                    "reason": result.get("reason", ""),
-                    "call_id": result.id_bell,
-                    "datetime": result.datetime_bell.strftime("%Y-%m-%d %H:%M")
-                })
-
-            return Response({
-                "results": formatted_results,
-                "prompt": prompt  # Возвращаем оригинальный промпт для отладки
-            })
+            reply = giga_query(query)
+            return JsonResponse({"reply": reply})
 
         except Exception as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return JsonResponse({"reply": f"Ошибка: {str(e)}"})
+    return JsonResponse({"reply": "Метод не поддерживается."}, status=405)
 
-        print("📡 Отправляем запрос в GigaChat...")
-        print(json.dumps(dialogs, ensure_ascii=False, indent=2))
 
 
 

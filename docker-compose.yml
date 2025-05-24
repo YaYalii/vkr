@@ -7,6 +7,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/app
+      - chroma_data:/app/chroma_data
     ports:
       - 8000:8000
     depends_on:
@@ -49,7 +50,7 @@ services:
       "
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -71,7 +72,10 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
 
+
+
 volumes:
   pgdbdata:
   minio_data:
   esdata:
+  chroma_data:
